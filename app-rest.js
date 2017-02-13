@@ -27,8 +27,8 @@ PortfolioResource.route('loadTestData', function (req, res, next) {
    testDataLoader(mongoose);
    res.send("Completed test data load");
 });
+PortfolioResource.register(apprest, '/rest/portfolio');
 
-PortfolioResource.register(apprest, '/rest/portfolios');
 var ProjectResource = apprest.resource = restful.model('Project', schemas.projectSchema)
     .methods(defaultRestMethods);
 ProjectResource.register(apprest, '/rest/project');
