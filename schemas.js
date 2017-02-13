@@ -29,7 +29,7 @@ exports.metricGroupSchema = new Schema({
 });
 
 exports.metricTypeSchema = new Schema({
-    name: {type: String, required: true},
+    name: {type: String, required: true, unique: true},
     validator: {type: String, required: true}
 });
 

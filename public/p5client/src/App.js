@@ -1,28 +1,17 @@
 import React, { Component } from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
+
 import NavigationComponent from './components/Navigation';
+import ProjectTable from './components/ProjectTable';
 
-function getTableProjectData() {
-    var cols = [
-        {
-            key: "id",
-            label: "ID"
-        },
-        {
-            key: "name",
-            label: "name"
-        }
+
+var projects = [
+        {id: 1, name: "Some project huh?", isActive: true},
+        {id: 50, name: "another project, easy?", isActive: true},
+        {id:666, name: "Bad project, always red!", isActive: false}
     ];
 
-    var data = [
-        {id: 1, name: "Some project huh?"},
-        {id: 50, name: "another project, easy?"},
-        {id:666, name: "Bad project, always red!"}
-    ];
-
-    return {columns: cols, data: data};
-}
 
 class App extends Component {
   render() {
@@ -30,6 +19,7 @@ class App extends Component {
         <MuiThemeProvider>
             <div>
                 <NavigationComponent/>
+                <ProjectTable data={projects}/>
             </div>
         </MuiThemeProvider>
     );

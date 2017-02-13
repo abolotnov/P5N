@@ -1,7 +1,7 @@
 var schemas = require('./schemas'),
     mongoose = require('mongoose');
 
-exports.portfolioModel = mongoose.mode('Portfolio', schemas.portfolioSchema);
+exports.portfolioModel = mongoose.model('Portfolio', schemas.portfolioSchema);
 exports.projectModel = mongoose.model('Project', schemas.projectSchema);
 exports.metricGroupModel = mongoose.model('metricGroup', schemas.metricGroupSchema);
 exports.metricTypeModel = mongoose.model('metricType', schemas.metricTypeSchema);

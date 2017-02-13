@@ -7,6 +7,7 @@ var express = require('express'),
     schemas = require('./schemas'),
     path = require('path');
 var apprest = express();
+var testDataLoader = require('./test/dataLoader');
 
 apprest.use(express.static(path.join(__dirname, 'public/p5client/build')));
 apprest.use(morgan('dev'));
@@ -20,19 +21,20 @@ mongoose.connect("mongodb://localhost/metricsKeeper");
 const defaultRestMethods = ['get', 'post', 'put', 'delete'];
 const readOnlyRestMethods = ['get'];
 
+var PortfolioResource = apprest.resource = restful.model('Portfolio', schemas.portfolioSchema)
+    .methods(defaultRestMethods);
+PortfolioResource.route('loadTestData', function (req, res, next) {
+   testDataLoader(mongoose);
+   res.send("Completed test data load");
+});
+
+PortfolioResource.register(apprest, '/rest/portfolios');
 var ProjectResource = apprest.resource = restful.model('Project', schemas.projectSchema)
     .methods(defaultRestMethods);
-ProjectResource.route('joke', function(req, res, next){
-    res.send("say a joke!");
-});
 ProjectResource.register(apprest, '/rest/project');
 
 var MetricGroupResource = apprest.resource = restful.model('MetricGroup', schemas.metricGroupSchema)
     .methods(defaultRestMethods);
-MetricGroupResource.route('metrics', function(req, res, next){
-    res.send("Currently being implemented - list of all group's metrics");
-    //res.send().toJSON();
-});
 MetricGroupResource.register(apprest, '/rest/metricgroup');
 
 var MetricTypeResource = apprest.resource = restful.model('MetricType', schemas.metricTypeSchema)
