@@ -17,7 +17,7 @@ function getRandomProject(callBack) {
     });
 }
 
-function getRamdomMetricGroupAndMetrics(callBack){
+function getRandomMetricGroupAndMetrics(callBack){
     let mGroup, metrics;
     MetricGroup.count().exec(function(err, count){
         let rand = Math.floor(Math.random() * count);
@@ -62,11 +62,15 @@ module.exports = function(store, numberOfRecords) {
         _project = data;
     });
 
-    getRamdomMetricGroupAndMetrics(function (err, data) {
+    getRandomMetricGroupAndMetrics(function (err, data) {
         if (err) console.log(err);
         _metrics = data;
     });
 
+
+    /*
+    Both _project and _metrics are undefined at this point
+     */
     console.log("Project:\n"+_project+"\nMetrics:\n"+_metrics);
 
     for(let x =0; x<numberOfRecords; x++){
