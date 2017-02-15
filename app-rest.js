@@ -8,6 +8,7 @@ var express = require('express'),
     path = require('path');
 var apprest = express();
 var testDataLoader = require('./test/dataLoader');
+var testReportLoader = require('./test/testReportLoader');
 
 apprest.use(express.static(path.join(__dirname, 'public/p5client/build')));
 apprest.use(morgan('dev'));
@@ -24,7 +25,8 @@ const readOnlyRestMethods = ['get'];
 var PortfolioResource = apprest.resource = restful.model('Portfolio', schemas.portfolioSchema)
     .methods(defaultRestMethods);
 PortfolioResource.route('loadTestData', function (req, res, next) {
-   testDataLoader(mongoose);
+   //testDataLoader(mongoose);
+   testReportLoader(mongoose, 10);
    res.send("Completed test data load");
 });
 PortfolioResource.register(apprest, '/rest/portfolio');
