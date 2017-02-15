@@ -6,7 +6,7 @@ The concept is:
 * Only REST CRUD operations at backend, no page/views rendering - all this is going to be done with the clients
 * Static material-ui based client web site to enable display and management of the data
 * Not in progress (feel free to contribute):
-** Authorization and Authentication at REST level
-** User Management (user models and simple admin UI, again ideally REST-based)
+  *Authorization and Authentication at REST level
+  *User Management (user models and simple admin UI, again ideally REST-based)
 
 routes and views will eventually get removed as well as the app.js (app-rest is already functional for REST API)
