@@ -1,6 +1,6 @@
 var schema = require('./../schemas');
 var dropAllReports = false;
-var Store, Project, MetricGroup, Metric;
+var Store, Project, MetricGroup, Metric, MetricReport;
 
 function getRandomProject() {
     return new Promise(function (resolve, reject) {
@@ -14,56 +14,57 @@ function getRandomProject() {
     });
 }
 
-function getRandomMetricGroupAndMetrics(){
-    return new Promise(function(resolve, reject){
+function getRandomMetricGroupAndMetrics() {
+    return new Promise(function (resolve, reject) {
         let mGroup, metrics;
-        MetricGroup.count().exec(function(err, count){
-        let rand = Math.floor(Math.random() * count);
-        MetricGroup.findOne().skip(rand).exec(function(err, data){
-            if (err) reject(err);
-            else{
-                mGroup = data;
-                Metric.find({metricGroup: data._id}).exec(function(err, data){
-                    if (err) reject(err);
-                    else{
-                        metrics = data;
-                        resolve({metricGroup: mGroup, metrics: metrics});
-                    }
-                });
-            }
+        MetricGroup.count().exec(function (err, count) {
+            let rand = Math.floor(Math.random() * count);
+            MetricGroup.findOne().skip(rand).exec(function (err, data) {
+                if (err) reject(err);
+                else {
+                    mGroup = data;
+                    Metric.find({metricGroup: data._id}).exec(function (err, data) {
+                        if (err) reject(err);
+                        else {
+                            metrics = data;
+                            resolve({metricGroup: mGroup, metrics: metrics});
+                        }
+                    });
+                }
+            });
         });
     });
-    });
-
 }
 
 
-function set(store){
+function set(store) {
     Store = store;
     Project = Store.model('Project', schema.projectSchema);
     MetricGroup = Store.model('MetricGroup', schema.metricGroupSchema);
     Metric = Store.model('Metric', schema.metricSchema);
-    return new Promise(function(resolve, reject){
+    MetricReport = Store.model('MetricReport', schema.metricReportSchema);
+    return new Promise(function (resolve, reject) {
         resolve();
     });
 }
 
-module.exports = function(store, numberOfRecords) {
-
+module.exports = function (store, numberOfRecords) {
     set(store).then(
-    getRandomProject().then(function (result) {
-        console.log(result);
-    },
-    function(err){
-        console.log(err);
-    })).then(
-        getRandomMetricGroupAndMetrics().then(function (result) {
-            console.log(result.metricGroup);
-            console.log(result.metrics);
-        },
-            function(err){
-            console.log(err);
-            }
-        ));
+        if (dropAllReports) MetricReport.collection.drop();
 
+        getRandomProject().then(function (result) {
+                console.log(result);
+            },
+            function (err) {
+                console.log(err);
+            })).then(
+        getRandomMetricGroupAndMetrics().then(function (result) {
+                console.log(result.metricGroup);
+                console.log(result.metrics);
+            },
+            function (err) {
+                console.log(err);
+            }
+        )
+    );
 }
