@@ -49,16 +49,18 @@ function set(store) {
 }
 
 module.exports = function (store, numberOfRecords) {
-    set(store).then(
-        if (dropAllReports) MetricReport.collection.drop();
+    set(store).then(function(){if (dropAllReports) MetricReport.collection.drop();}).then(
 
-        getRandomProject().then(function (result) {
+
+        getRandomProject().then(
+            function (result) {
                 console.log(result);
             },
             function (err) {
                 console.log(err);
-            })).then(
-        getRandomMetricGroupAndMetrics().then(function (result) {
+            }).then(
+        getRandomMetricGroupAndMetrics().then(
+            function (result) {
                 console.log(result.metricGroup);
                 console.log(result.metrics);
             },
@@ -66,5 +68,5 @@ module.exports = function (store, numberOfRecords) {
                 console.log(err);
             }
         )
-    );
+    ));
 }
