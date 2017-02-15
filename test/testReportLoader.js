@@ -69,4 +69,8 @@ module.exports = function(store, numberOfRecords) {
 
     console.log("Project:\n"+_project+"\nMetrics:\n"+_metrics);
 
+    for(let x =0; x<numberOfRecords; x++){
+        console.log("Starting rendering metrics");
+    }
+
 }
