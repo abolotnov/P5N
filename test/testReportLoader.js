@@ -1,12 +1,11 @@
 var schema = require('./../schemas');
 var dropAllReports = false;
-var Store, Project, MetricGroup, Metric, MetricReport;
 
-function getRandomProject() {
+function getRandomProject(project) {
     return new Promise(function (resolve, reject) {
-        Project.count().exec(function (err, count) {
+        project.count().exec(function (err, count) {
             var rand = Math.floor(Math.random() * count);
-            Project.findOne().skip(rand).exec(function (err, data) {
+            project.findOne().skip(rand).exec(function (err, data) {
                 if (err) reject(err);
                 else resolve(data);
             });
@@ -14,16 +13,16 @@ function getRandomProject() {
     });
 }
 
-function getRandomMetricGroupAndMetrics() {
+function getRandomMetricGroupAndMetrics(metricGroup, metric) {
     return new Promise(function (resolve, reject) {
         let mGroup, metrics;
-        MetricGroup.count().exec(function (err, count) {
+        metricGroup.count().exec(function (err, count) {
             let rand = Math.floor(Math.random() * count);
-            MetricGroup.findOne().skip(rand).exec(function (err, data) {
+            metricGroup.findOne().skip(rand).exec(function (err, data) {
                 if (err) reject(err);
                 else {
                     mGroup = data;
-                    Metric.find({metricGroup: data._id}).exec(function (err, data) {
+                    metric.find({metricGroup: data._id}).exec(function (err, data) {
                         if (err) reject(err);
                         else {
                             metrics = data;
@@ -37,36 +36,22 @@ function getRandomMetricGroupAndMetrics() {
 }
 
 
-function set(store) {
-    Store = store;
-    Project = Store.model('Project', schema.projectSchema);
-    MetricGroup = Store.model('MetricGroup', schema.metricGroupSchema);
-    Metric = Store.model('Metric', schema.metricSchema);
-    MetricReport = Store.model('MetricReport', schema.metricReportSchema);
-    return new Promise(function (resolve, reject) {
-        resolve();
-    });
-}
-
 module.exports = function (store, numberOfRecords) {
-    set(store).then(function(){if (dropAllReports) MetricReport.collection.drop();}).then(
-
-
-        getRandomProject().then(
-            function (result) {
-                console.log(result);
-            },
-            function (err) {
-                console.log(err);
-            }).then(
-        getRandomMetricGroupAndMetrics().then(
-            function (result) {
-                console.log(result.metricGroup);
-                console.log(result.metrics);
-            },
-            function (err) {
-                console.log(err);
-            }
-        )
-    ));
+    const project = store.model('Project', schema.projectSchema);
+    const metricGroup = store.model('MetricGroup', schema.metricGroupSchema);
+    const metric = store.model('Metric', schema.metricSchema);
+    const metricReport = store.model('MetricReport', schema.metricReportSchema);  
+    
+    //This also async - I don't really know why did you add it, so can't really refactor it much
+    if (dropAllReports) metricReport.collection.drop(); 
+    
+    Promise
+        .all([getRandomProject(project), getRandomMetricGroupAndMetrics(metricGroup, metric)])
+        .then(([projectData, metricData]) => {
+          //Here you can do you loop 
+          //You have projectData available here, metricData available as well
+        })
+        .catch(e => 
+            throw new Error(e);
+        })
 }
