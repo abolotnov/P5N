@@ -1,5 +1,5 @@
-var schemas = require('./schemas'),
-    mongoose = require('mongoose');
+const schemas = require('./schemas');
+const mongoose = require('mongoose');
 
 exports.portfolioModel = mongoose.model('Portfolio', schemas.portfolioSchema);
 exports.projectModel = mongoose.model('Project', schemas.projectSchema);

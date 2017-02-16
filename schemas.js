@@ -6,8 +6,8 @@
  * Single Letter: /^\w{1}$/gi
  */
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
 exports.portfolioSchema = new Schema({
