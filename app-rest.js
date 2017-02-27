@@ -8,6 +8,7 @@ const schemas = require('./schemas');
 const path = require('path');
 const moment = require('moment');
 const dsMetricData = require('./dataServices/metricData');
+const dsAvailableMetrics = require('./dataServices/projectPopulatedMetrics');
 
 const apprest = express();
 const testDataLoader = require('./test/dataLoader');
@@ -36,6 +37,7 @@ PortfolioResource.register(apprest, '/rest/portfolio');
 
 const ProjectResource = apprest.resource = restful.model('Project', schemas.projectSchema)
     .methods(defaultRestMethods);
+
 ProjectResource.route('metricdata', function (req, res, next) {
     if (!req.query.metric) {
         res.send("metric param is missing");
@@ -53,6 +55,17 @@ ProjectResource.route('metricdata', function (req, res, next) {
                 res.send(e);
             });
     }
+});
+
+ProjectResource.route('filledmetrics', function (req, res, next) {
+    Promise
+        .all([dsAvailableMetrics(mongoose, req.query.project)])
+        .then((out) => {
+        res.send(out);
+        })
+        .catch((e => {
+            res.send(e);
+        }))
 });
 
 ProjectResource.register(apprest, '/rest/project');
