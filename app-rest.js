@@ -6,6 +6,8 @@ const restful = require('node-restful');
 const mongoose = restful.mongoose;
 const schemas = require('./schemas');
 const path = require('path');
+const moment = require('moment');
+const dsMetricData = require('./dataServices/metricData');
 
 const apprest = express();
 const testDataLoader = require('./test/dataLoader');
@@ -27,13 +29,32 @@ const PortfolioResource = apprest.resource = restful.model('Portfolio', schemas.
     .methods(defaultRestMethods);
 PortfolioResource.route('loadTestData', function (req, res, next) {
     //testDataLoader(mongoose);
-    testReportLoader(mongoose, 10);
+    testReportLoader(mongoose, 1000);
     res.send("Completed test data load");
 });
 PortfolioResource.register(apprest, '/rest/portfolio');
 
 const ProjectResource = apprest.resource = restful.model('Project', schemas.projectSchema)
     .methods(defaultRestMethods);
+ProjectResource.route('metricdata', function (req, res, next) {
+    if (!req.query.metric) {
+        res.send("metric param is missing");
+    }
+    else if (!req.query.project) {
+        res.send("project param is missing");
+    }
+    else {
+        Promise
+            .all([dsMetricData(mongoose, req.query.metric, req.query.project, 100)])
+            .then((out) => {
+                res.send(out);
+            })
+            .catch(e => {
+                res.send(e);
+            });
+    }
+});
+
 ProjectResource.register(apprest, '/rest/project');
 
 const MetricGroupResource = apprest.resource = restful.model('MetricGroup', schemas.metricGroupSchema)

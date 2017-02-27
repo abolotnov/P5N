@@ -1,5 +1,7 @@
 const schema = require('./../schemas');
-const dropAllReports = false;
+let randomdate = require('randomdate');
+const randomdateMin = new Date(2010,0,1);
+const randomdateMax = new Date(Date.now());
 
 const getRandomProject = (project) => new Promise((resolve, reject) => {
     project.count().exec((err, count) => {
@@ -10,7 +12,6 @@ const getRandomProject = (project) => new Promise((resolve, reject) => {
         });
     });
 });
-
 
 const getRandomMetricGroupAndMetrics = (metricGroup, metric) => new Promise((resolve, reject) => {
     let mGroup, metrics;
@@ -34,6 +35,9 @@ const getRandomMetricGroupAndMetrics = (metricGroup, metric) => new Promise((res
     });
 });
 
+function generateRandomMetricValue(type){
+    return Math.floor(Math.random() * (1000 - 0));
+}
 
 module.exports = (store, numberOfRecords) => {
     const project = store.model('Project', schema.projectSchema);
@@ -41,14 +45,25 @@ module.exports = (store, numberOfRecords) => {
     const metric = store.model('Metric', schema.metricSchema);
     const metricReport = store.model('MetricReport', schema.metricReportSchema);
 
-    //This also async - I don't really know why did you add it, so can't really refactor it much
-    if (dropAllReports) metricReport.collection.drop();
-
     Promise
         .all([getRandomProject(project), getRandomMetricGroupAndMetrics(metricGroup, metric)])
         .then(([projectData, metricData]) => {
             //Here you can do you loop
             //You have projectData available here, metricData available as well
+            for (let x=0; x < Math.floor(numberOfRecords/metricData.metrics.length); x++){
+                const report = new metricReport();
+                metricData.metrics.forEach(m => {
+                    report.metrics.push({
+                        metric: m,
+                        value: generateRandomMetricValue(m.metricType)
+                    });
+                });
+            report.project = projectData;
+            report.reportDate = randomdate(randomdateMin, randomdateMax);
+            report.save(err => {
+                   if (err) console.log(err);
+                });
+            }
         })
         .catch(e => {
             throw new Error(e);
