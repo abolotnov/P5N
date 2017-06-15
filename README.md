@@ -1,3 +1,5 @@
+Moved to abolotnov/MetricsKeeper (C#)
+
 P5N is intended for storing, keeping and displaying of various metrics (primarily ones that relate to software development and SLA/KPI)
 
 The concept is:
